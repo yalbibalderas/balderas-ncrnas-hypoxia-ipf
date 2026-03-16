@@ -1,0 +1,14 @@
+.DS_Store
+.Rproj.user
+.RData
+.Rhistory
+.Ruserdata
+*_cache/
+*_files/
+
+# Datos crudos (archivos grandes, no versionados)
+data/raw/
+data/CEL/
+
+# Objetos R intermedios
+RData/
