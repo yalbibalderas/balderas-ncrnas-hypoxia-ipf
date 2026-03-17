@@ -15,56 +15,80 @@ Análisis de redes de RNA no codificante (lncRNA-mRNA) en fibroblastos pulmonare
 - Dr. Yair Romero (Facultad de Ciencias, UNAM)
 - Dr. Arnoldo Aquino-Gálvez (Departamento de Fibrosis Pulmonar, INER)
 
+## Versiones del análisis
+
+Este repositorio contiene dos versiones del análisis, organizadas por la procedencia de los datos de expresión diferencial:
+
+- **v1-original-2022/** — Análisis original realizado por el Dr. Iván Salido usando `affy::rma()` con diseño experimental hardcoded. Las consultas ENCORI y redes MirNet se construyeron sobre estas tablas DE.
+- **v2-corrected-2025/** — Análisis actualizado usando las tablas DE corregidas generadas con `oligo::rma()` y metadata.csv (script 08 del repo de transcriptómica). Incluye 5 comparaciones DE y figuras actualizadas.
+
+> Para detalles sobre las diferencias entre versiones, ver [CHANGELOG.md](CHANGELOG.md).
+
 ## Estructura del proyecto
 
 ```
 balderas-ncrnas-hypoxia-ipf/
-├── README.md, LICENSE, .gitignore, balderas-ncrnas-hypoxia-ipf.Rproj
+├── README.md, CHANGELOG.md, LICENSE, .gitignore
+├── balderas-ncrnas-hypoxia-ipf.Rproj
 │
-├── scripts/
-│   ├── encori.R                    # Consultas a ENCORI/StarBase
-│   ├── encori2.R
-│   ├── network.R                   # Construcción de redes lncRNA-mRNA
-│   ├── rna-rna-function.R          # Funciones para interacciones RNA-RNA
-│   ├── run-rna-rna-from-list.R
-│   └── ivan/                       # Scripts del Dr. Iván Salido
-│       ├── 00-pipeline-ipf-hipoxia-ivan.R
-│       └── rhistory-*.R            # Historiales de sesiones R
+├── v1-original-2022/                    # Análisis original (affy::rma)
+│   ├── scripts/
+│   │   ├── ivan/
+│   │   │   ├── 00-pipeline-ipf-hipoxia-ivan.R   # Pipeline monolítico DE + ncRNA
+│   │   │   └── rhistory-*.R                      # Historiales de sesiones R
+│   │   ├── encori.R                     # Consultas ENCORI/StarBase (v1)
+│   │   ├── network.R                    # Integración con RISE database
+│   │   └── rna-rna-function.R           # Función rna_rna() con URLencode
+│   ├── data/
+│   │   ├── *-table-differential-expression-nr.csv  # Tablas DE Iván (IPF y Control)
+│   │   ├── rna-interactions-resultados-*.csv       # Resultados ENCORI
+│   │   ├── deg-lists/                   # Listas de DEGs filtrados
+│   │   │   ├── fibrotic-hx-vs-nx/
+│   │   │   └── normal-hx-vs-nx/
+│   │   ├── mirnet/                      # Datos de redes MirNet
+│   │   └── lncrna-rnacentral/          # Anotaciones RNAcentral
+│   ├── results/
+│   │   ├── enrichment/normal/mirna/     # Enrichr por miRNA individual
+│   │   ├── figures/
+│   │   │   ├── fig1-experimental-design.png
+│   │   │   ├── heatmaps-volcanos/       # Heatmaps y volcanos (v1)
+│   │   │   ├── networks/               # Screenshots de redes
+│   │   │   ├── venns/                   # Diagramas de Venn
+│   │   │   └── previous-versions/       # Versiones anteriores
+│   │   ├── networks/                    # Redes Cytoscape (.cys)
+│   │   └── tables/                      # Tablas suplementarias
+│   └── docs/
+│       ├── manuscript/                  # Borradores del manuscrito
+│       └── photo-*.jpg                  # Fotos de reuniones
 │
-├── data/
-│   ├── *-table-differential-expression-nr.csv  # Tablas DE (IPF y Control)
-│   ├── rna-interactions-resultados-*.csv       # Resultados ENCORI
-│   ├── expression-matrices/        # Matrices de expresión normalizadas
-│   ├── deg-lists/                  # Listas de DEGs por comparación
-│   │   ├── fibrotic-hx-vs-nx/
-│   │   └── normal-hx-vs-nx/
-│   ├── encori-reference/           # Datos de referencia ENCORI/StarBase
-│   ├── mirnet/                     # Datos de redes MirNet (nodos, targets)
-│   └── lncrna-rnacentral/         # Anotaciones RNAcentral para lncRNAs
-│
-├── results/
-│   ├── networks/                   # Redes Cytoscape (.cys)
-│   ├── tables/                     # Tablas suplementarias
-│   ├── enrichment/                 # Análisis de enriquecimiento
-│   │   └── normal/                 # Enrichment normal Hx vs Nx
-│   │       └── mirna/              # Por miRNA individual
-│   └── figures/
-│       ├── fig1-experimental-design.png
-│       ├── fig3-heatmap-volcano-boxplot.png
-│       ├── heatmaps-volcanos/      # Heatmaps y volcanos por comparación
-│       ├── networks/               # Screenshots de redes
-│       ├── venns/                  # Diagramas de Venn (ncRNAs compartidos)
-│       └── previous-versions/      # Versiones anteriores de figuras
-│
-└── docs/
-    ├── legend-figure-2-ivan.pdf    # Leyenda de Fig. 2 (Iván)
-    ├── manuscript/                 # Manuscrito y figuras en preparación
-    └── photo-*.jpg                 # Fotos de reuniones
+└── v2-corrected-2025/                   # Análisis corregido (oligo::rma)
+    ├── scripts/
+    │   ├── encori2.R                    # ENCORI mejorado (httr, error handling)
+    │   └── run-rna-rna-from-list.R      # Consultas ENCORI desde listas DE
+    ├── data/
+    │   ├── deg-tables/                  # 5 tablas DE corregidas (NR_ ncRNA)
+    │   ├── expression-matrices/         # Matrices de expresión normalizadas
+    │   └── encori-reference/            # Tablas de referencia ENCORI/StarBase
+    ├── results/
+    │   └── figures/
+    │       ├── fig3-heatmap-volcano-boxplot.png  # Figura compuesta (Iván)
+    │       ├── heatmaps-volcanos/       # Heatmaps y volcanos corregidos
+    │       └── networks/                # Figuras de redes actualizadas
+    └── docs/
+        └── legend-figure-2-ivan.pdf     # Leyenda Fig. 2 (Iván)
 ```
 
 ## Descripción
 
-A partir de los genes diferencialmente expresados identificados en el análisis transcriptómico corregido (Clariom D, hipoxia vs normoxia en fibroblastos IPF y control), se realizó un análisis de interacciones RNA-RNA utilizando ENCORI/StarBase para construir redes de regulación lncRNA-mRNA. Las redes se visualizaron y analizaron en Cytoscape.
+A partir de los genes diferencialmente expresados identificados en el análisis transcriptómico (Clariom D, hipoxia vs normoxia en fibroblastos IPF y control), se realizó un análisis de interacciones RNA-RNA utilizando ENCORI/StarBase para construir redes de regulación lncRNA-mRNA. Las redes se visualizaron y analizaron en Cytoscape.
+
+### Flujo de análisis
+
+1. **Expresión diferencial** — Identificación de ncRNAs (accession NR_) diferencialmente expresados entre condiciones de hipoxia y normoxia
+2. **Interacciones RNA-RNA** — Consultas a ENCORI/StarBase para identificar interacciones lncRNA-mRNA y miRNA-target
+3. **Redes MirNet** — Construcción de redes miRNA-target usando MirNet
+4. **Enriquecimiento funcional** — Análisis de enriquecimiento por miRNA individual usando Enrichr (GO Biological Process)
+5. **Visualización** — Redes de interacción en Cytoscape, heatmaps, volcanos y diagramas de Venn
 
 ## Herramientas
 
