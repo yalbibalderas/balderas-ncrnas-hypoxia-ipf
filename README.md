@@ -11,6 +11,7 @@ Análisis de redes de RNA no codificante (lncRNA-mRNA) en fibroblastos pulmonare
 ## Colaboradores
 
 - Dra. Yalbi I. Balderas-Martínez (Laboratorio de Biología Computacional, INER)
+- Dr. Iván Salido (Instituto Nacional de Perinatología)
 - Dr. Yair Romero (Facultad de Ciencias, UNAM)
 - Dr. Arnoldo Aquino-Gálvez (Departamento de Fibrosis Pulmonar, INER)
 
