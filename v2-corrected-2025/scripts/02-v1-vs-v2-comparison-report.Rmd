@@ -1,0 +1,256 @@
+---
+title: "Reporte comparativo: v1-original vs v2-corrected"
+subtitle: "Análisis de ncRNAs en fibroblastos IPF hipoxia/normoxia"
+author: "Dra. Yalbi I. Balderas-Martínez"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    code_folding: show
+    theme: flatly
+params:
+  adj_pval_threshold: 0.05
+  logfc_threshold: 0.7
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  message = FALSE,
+  warning = FALSE,
+  fig.width = 10,
+  fig.height = 7
+)
+
+v1_dir <- here::here("v1-original-2022")
+v2_dir <- here::here("v2-corrected-2025")
+```
+
+# Objetivo
+
+Comparar los resultados de expresión diferencial de ncRNAs entre las dos
+versiones del análisis:
+
+- **v1-original (2022):** Tablas DE generadas por el Dr. Iván Salido con
+  `affy::rma()` y diseño experimental hardcoded.
+- **v2-corrected (2025):** Tablas DE corregidas con `oligo::rma()` y metadata.csv.
+
+# 1. Cargar datos
+
+```{r load-data}
+library(readr)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(knitr)
+
+# --- v1 ---
+v1_ipf <- read_csv(file.path(v1_dir, "data",
+                               "ipf-table-differential-expression-nr.csv"),
+                    show_col_types = FALSE) |>
+  mutate(version = "v1", comparison = "fibrotic_hx_vs_nx")
+
+v1_ctrl <- read_csv(file.path(v1_dir, "data",
+                                "control-table-differential-expression-nr.csv"),
+                     show_col_types = FALSE) |>
+  mutate(version = "v1", comparison = "normal_hx_vs_nx")
+
+# --- v2 ---
+v2_fibrotic <- read_tsv(
+  file.path(v2_dir, "data", "deg-tables",
+            "deg_fibrotic_hipoxia_vs_fibrotic_normoxia_nr_ncbi_non-coding_rna.txt"),
+  show_col_types = FALSE
+) |>
+  mutate(version = "v2", comparison = "fibrotic_hx_vs_nx",
+         RNA = SYMBOL)
+
+v2_normal <- read_tsv(
+  file.path(v2_dir, "data", "deg-tables",
+            "deg_normal_hipoxia_vs_normal_normoxia_nr_ncbi_non-coding_rna.txt"),
+  show_col_types = FALSE
+) |>
+  mutate(version = "v2", comparison = "normal_hx_vs_nx",
+         RNA = SYMBOL)
+
+cat("v1 IPF:", nrow(v1_ipf), "probes\n")
+cat("v1 Control:", nrow(v1_ctrl), "probes\n")
+cat("v2 Fibrotic:", nrow(v2_fibrotic), "probes\n")
+cat("v2 Normal:", nrow(v2_normal), "probes\n")
+```
+
+# 2. Filtrar ncRNAs significativos
+
+```{r filter-significant}
+pval_th <- params$adj_pval_threshold
+lfc_th <- params$logfc_threshold
+
+v1_ipf_sig <- v1_ipf |> filter(adj.P.Val < pval_th, abs(logFC) > lfc_th)
+v1_ctrl_sig <- v1_ctrl |> filter(adj.P.Val < pval_th, abs(logFC) > lfc_th)
+v2_fib_sig <- v2_fibrotic |> filter(adj.P.Val < pval_th, abs(logFC) > lfc_th)
+v2_nor_sig <- v2_normal |> filter(adj.P.Val < pval_th, abs(logFC) > lfc_th)
+
+summary_table <- tibble(
+  Comparison = c("Fibrotic Hx vs Nx", "Fibrotic Hx vs Nx",
+                 "Normal Hx vs Nx", "Normal Hx vs Nx"),
+  Version = c("v1", "v2", "v1", "v2"),
+  `Significant ncRNAs` = c(nrow(v1_ipf_sig), nrow(v2_fib_sig),
+                            nrow(v1_ctrl_sig), nrow(v2_nor_sig)),
+  Up = c(sum(v1_ipf_sig$logFC > 0), sum(v2_fib_sig$logFC > 0),
+         sum(v1_ctrl_sig$logFC > 0), sum(v2_nor_sig$logFC > 0)),
+  Down = c(sum(v1_ipf_sig$logFC < 0), sum(v2_fib_sig$logFC < 0),
+           sum(v1_ctrl_sig$logFC < 0), sum(v2_nor_sig$logFC < 0))
+)
+
+kable(summary_table,
+      caption = paste0("ncRNAs significativos (adj.P.Val < ", pval_th,
+                        ", |logFC| > ", lfc_th, ")"))
+```
+
+# 3. Genes compartidos y únicos
+
+## 3.1 Fibrotic Hx vs Nx
+
+```{r venn-fibrotic}
+shared_fib <- intersect(v1_ipf_sig$RNA, v2_fib_sig$RNA)
+only_v1_fib <- setdiff(v1_ipf_sig$RNA, v2_fib_sig$RNA)
+only_v2_fib <- setdiff(v2_fib_sig$RNA, v1_ipf_sig$RNA)
+
+cat("Compartidos:", length(shared_fib), "\n")
+if (length(shared_fib) > 0) cat("  ", paste(shared_fib, collapse = ", "), "\n\n")
+cat("Solo en v1:", length(only_v1_fib), "\n")
+if (length(only_v1_fib) > 0) cat("  ", paste(only_v1_fib, collapse = ", "), "\n\n")
+cat("Solo en v2:", length(only_v2_fib), "\n")
+if (length(only_v2_fib) > 0) cat("  ", paste(only_v2_fib, collapse = ", "), "\n")
+```
+
+## 3.2 Normal Hx vs Nx
+
+```{r venn-normal}
+shared_nor <- intersect(v1_ctrl_sig$RNA, v2_nor_sig$RNA)
+only_v1_nor <- setdiff(v1_ctrl_sig$RNA, v2_nor_sig$RNA)
+only_v2_nor <- setdiff(v2_nor_sig$RNA, v1_ctrl_sig$RNA)
+
+cat("Compartidos:", length(shared_nor), "\n")
+if (length(shared_nor) > 0) cat("  ", paste(shared_nor, collapse = ", "), "\n\n")
+cat("Solo en v1:", length(only_v1_nor), "\n")
+if (length(only_v1_nor) > 0) cat("  ", paste(head(only_v1_nor, 20), collapse = ", "), "\n\n")
+cat("Solo en v2:", length(only_v2_nor), "\n")
+if (length(only_v2_nor) > 0) cat("  ", paste(head(only_v2_nor, 20), collapse = ", "), "\n")
+```
+
+# 4. Correlación de logFC entre versiones
+
+```{r logfc-correlation}
+# Merge por nombre de gen para comparar logFC
+merge_fib <- inner_join(
+  v1_ipf |> select(RNA, logFC_v1 = logFC, pval_v1 = adj.P.Val),
+  v2_fibrotic |> select(RNA, logFC_v2 = logFC, pval_v2 = adj.P.Val),
+  by = "RNA"
+)
+
+merge_nor <- inner_join(
+  v1_ctrl |> select(RNA, logFC_v1 = logFC, pval_v1 = adj.P.Val),
+  v2_normal |> select(RNA, logFC_v2 = logFC, pval_v2 = adj.P.Val),
+  by = "RNA"
+)
+
+plot_correlation <- function(df, title) {
+  cor_val <- cor(df$logFC_v1, df$logFC_v2, use = "complete.obs")
+
+  ggplot(df, aes(x = logFC_v1, y = logFC_v2)) +
+    geom_point(alpha = 0.3, size = 1) +
+    geom_abline(slope = 1, intercept = 0, color = "red", linetype = "dashed") +
+    geom_smooth(method = "lm", color = "blue", se = TRUE, alpha = 0.2) +
+    annotate("text", x = min(df$logFC_v1, na.rm = TRUE),
+             y = max(df$logFC_v2, na.rm = TRUE),
+             label = paste0("r = ", round(cor_val, 3)),
+             hjust = 0, size = 5) +
+    labs(x = "logFC (v1-original)", y = "logFC (v2-corrected)",
+         title = title,
+         subtitle = paste0("n = ", nrow(df), " ncRNAs con match")) +
+    theme_minimal()
+}
+
+if (nrow(merge_fib) > 0) {
+  print(plot_correlation(merge_fib, "Fibrotic Hx vs Nx: logFC v1 vs v2"))
+}
+
+if (nrow(merge_nor) > 0) {
+  print(plot_correlation(merge_nor, "Normal Hx vs Nx: logFC v1 vs v2"))
+}
+```
+
+# 5. Genes que cambian de significancia entre versiones
+
+```{r significance-changes}
+check_sig_change <- function(merged, comp_name) {
+  df <- merged |>
+    mutate(
+      sig_v1 = pval_v1 < pval_th & abs(logFC_v1) > lfc_th,
+      sig_v2 = pval_v2 < pval_th & abs(logFC_v2) > lfc_th,
+      change = case_when(
+        sig_v1 & sig_v2 ~ "Significant in both",
+        sig_v1 & !sig_v2 ~ "Lost in v2",
+        !sig_v1 & sig_v2 ~ "Gained in v2",
+        TRUE ~ "Not significant in either"
+      )
+    )
+
+  cat("\n===", comp_name, "===\n")
+  cat(table(df$change), "\n")
+
+  lost <- df |> filter(change == "Lost in v2") |>
+    arrange(pval_v1) |> select(RNA, logFC_v1, pval_v1, logFC_v2, pval_v2)
+  gained <- df |> filter(change == "Gained in v2") |>
+    arrange(pval_v2) |> select(RNA, logFC_v1, pval_v1, logFC_v2, pval_v2)
+
+  if (nrow(lost) > 0) {
+    cat("\nncRNAs perdidos en v2 (top 10):\n")
+    print(kable(head(lost, 10)))
+  }
+  if (nrow(gained) > 0) {
+    cat("\nncRNAs ganados en v2 (top 10):\n")
+    print(kable(head(gained, 10)))
+  }
+
+  df
+}
+
+if (nrow(merge_fib) > 0) {
+  fib_changes <- check_sig_change(merge_fib, "Fibrotic Hx vs Nx")
+}
+
+if (nrow(merge_nor) > 0) {
+  nor_changes <- check_sig_change(merge_nor, "Normal Hx vs Nx")
+}
+```
+
+# 6. Impacto en redes ENCORI
+
+```{r encori-impact}
+# ncRNAs que se usaron como input para ENCORI en v1
+v1_encori_input_ipf <- v1_ipf_sig$RNA
+v1_encori_input_ctrl <- v1_ctrl_sig$RNA
+
+# ncRNAs que se usarían como input para ENCORI en v2
+v2_encori_input_fib <- v2_fib_sig$RNA
+v2_encori_input_nor <- v2_nor_sig$RNA
+
+cat("=== Input para ENCORI ===\n\n")
+cat("Fibrotic Hx vs Nx:\n")
+cat("  v1:", length(v1_encori_input_ipf), "genes\n")
+cat("  v2:", length(v2_encori_input_fib), "genes\n")
+cat("  Diferencia:", length(v2_encori_input_fib) - length(v1_encori_input_ipf), "\n\n")
+
+cat("Normal Hx vs Nx:\n")
+cat("  v1:", length(v1_encori_input_ctrl), "genes\n")
+cat("  v2:", length(v2_encori_input_nor), "genes\n")
+cat("  Diferencia:", length(v2_encori_input_nor) - length(v1_encori_input_ctrl), "\n")
+```
+
+# Información de sesión
+
+```{r session-info}
+sessionInfo()
+```

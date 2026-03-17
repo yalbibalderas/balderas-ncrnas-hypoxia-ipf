@@ -1,0 +1,382 @@
+---
+title: "Pipeline de interacciones ncRNA-RNA (v2-corrected)"
+subtitle: "Consultas ENCORI/StarBase con tablas DE corregidas"
+author: "Dra. Yalbi I. Balderas-Martínez"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    code_folding: show
+    theme: flatly
+params:
+  adj_pval_threshold: 0.05
+  logfc_threshold: 0.7
+  min_interaction_num: 1
+  min_exp_num: 1
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  message = TRUE,
+  warning = FALSE,
+  fig.width = 10,
+  fig.height = 7
+)
+
+# Directorio base del proyecto v2
+project_dir <- here::here("v2-corrected-2025")
+```
+
+# Introducción
+
+Este pipeline reproduce el análisis de interacciones ncRNA-RNA para el estudio
+de fibrosis pulmonar idiopática (IPF) bajo condiciones de hipoxia y normoxia,
+usando las **tablas DE corregidas** (v2) generadas con `oligo::rma()` y
+`metadata.csv` del repositorio de transcriptómica.
+
+**Diferencia clave con v1:** Las tablas DE v1 (Iván) usaban `affy::rma()` con
+diseño experimental hardcoded. Las tablas v2 corrigen la asignación de muestras
+a condiciones experimentales.
+
+## Parámetros
+
+- **adj.P.Val threshold:** `r params$adj_pval_threshold`
+- **|logFC| threshold:** `r params$logfc_threshold`
+- **Min interaction num (ENCORI):** `r params$min_interaction_num`
+- **Min experiment num (ENCORI):** `r params$min_exp_num`
+
+# 1. Cargar dependencias
+
+```{r libraries}
+library(readr)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(knitr)
+
+# Cargar función ENCORI
+source(file.path(project_dir, "scripts", "encori2.R"))
+```
+
+# 2. Cargar y explorar tablas DE
+
+```{r load-deg-tables}
+deg_dir <- file.path(project_dir, "data", "deg-tables")
+deg_files <- list.files(deg_dir, pattern = "\\.txt$", full.names = TRUE)
+
+# Leer todas las tablas DE
+deg_tables <- lapply(deg_files, function(f) {
+  df <- read_tsv(f, show_col_types = FALSE)
+  # Extraer nombre de la comparación del nombre del archivo
+  comparison <- basename(f) |>
+    gsub("deg_", "", x = _) |>
+    gsub("_nr_ncbi_non-coding_rna\\.txt", "", x = _)
+  df$comparison <- comparison
+  df
+})
+
+deg_all <- bind_rows(deg_tables)
+
+cat("Total de ncRNAs evaluados por comparación:", nrow(deg_tables[[1]]), "\n")
+cat("Comparaciones:", length(deg_files), "\n")
+```
+
+## 2.1 Resumen de ncRNAs significativos por comparación
+
+```{r deg-summary}
+deg_sig <- deg_all |>
+  filter(adj.P.Val < params$adj_pval_threshold,
+         abs(logFC) > params$logfc_threshold)
+
+deg_summary <- deg_sig |>
+  group_by(comparison) |>
+  summarise(
+    n_total = n(),
+    n_up = sum(logFC > 0),
+    n_down = sum(logFC < 0),
+    .groups = "drop"
+  ) |>
+  arrange(desc(n_total))
+
+kable(deg_summary,
+      caption = paste0("ncRNAs significativos (adj.P.Val < ",
+                        params$adj_pval_threshold,
+                        ", |logFC| > ", params$logfc_threshold, ")"),
+      col.names = c("Comparación", "Total", "Up", "Down"))
+```
+
+```{r deg-barplot, fig.cap="Número de ncRNAs DE significativos por comparación"}
+deg_summary_long <- deg_summary |>
+  pivot_longer(cols = c(n_up, n_down),
+               names_to = "direction",
+               values_to = "count") |>
+  mutate(direction = ifelse(direction == "n_up", "Upregulated", "Downregulated"),
+         count_signed = ifelse(direction == "Downregulated", -count, count))
+
+ggplot(deg_summary_long, aes(x = reorder(comparison, abs(count_signed)),
+                              y = count_signed, fill = direction)) +
+  geom_bar(stat = "identity") +
+  coord_flip() +
+  scale_fill_manual(values = c("Upregulated" = "#D73027", "Downregulated" = "#4575B4")) +
+  labs(x = "", y = "Number of significant ncRNAs",
+       title = "Differentially expressed ncRNAs (v2-corrected)",
+       fill = "Direction") +
+  theme_minimal()
+```
+
+## 2.2 Clasificación de ncRNAs
+
+```{r ncrna-classification}
+# Clasificar ncRNAs por tipo basado en el nombre del gen
+classify_ncrna <- function(symbol) {
+  case_when(
+    grepl("^MIR|^MIRLET|^MIR\\d", symbol) ~ "miRNA",
+    grepl("^LINC", symbol) ~ "lincRNA",
+    grepl("^SNORD", symbol) ~ "snoRNA (C/D box)",
+    grepl("^SNORA", symbol) ~ "snoRNA (H/ACA box)",
+    grepl("-AS\\d?$", symbol) ~ "antisense lncRNA",
+    grepl("^LOC\\d", symbol) ~ "uncharacterized ncRNA",
+    grepl("P\\d+$", symbol) ~ "pseudogene",
+    TRUE ~ "other ncRNA"
+  )
+}
+
+deg_sig <- deg_sig |>
+  mutate(ncrna_type = classify_ncrna(SYMBOL))
+
+ncrna_type_summary <- deg_sig |>
+  group_by(comparison, ncrna_type) |>
+  summarise(n = n(), .groups = "drop")
+
+ggplot(ncrna_type_summary, aes(x = comparison, y = n, fill = ncrna_type)) +
+  geom_bar(stat = "identity", position = "stack") +
+  coord_flip() +
+  labs(x = "", y = "Count", fill = "ncRNA type",
+       title = "Types of significant ncRNAs per comparison") +
+  theme_minimal() +
+  theme(legend.position = "right")
+```
+
+# 3. Comparación con v1
+
+Para las dos comparaciones compartidas (Fibrotic Hx vs Nx, Normal Hx vs Nx),
+comparamos los ncRNAs significativos entre v1 y v2.
+
+```{r v1-comparison}
+# Cargar tablas v1 si existen
+v1_dir <- here::here("v1-original-2022", "data")
+v1_ipf_file <- file.path(v1_dir, "ipf-table-differential-expression-nr.csv")
+v1_ctrl_file <- file.path(v1_dir, "control-table-differential-expression-nr.csv")
+
+if (file.exists(v1_ipf_file) && file.exists(v1_ctrl_file)) {
+  v1_ipf <- read_csv(v1_ipf_file, show_col_types = FALSE) |>
+    filter(adj.P.Val < params$adj_pval_threshold,
+           abs(logFC) > params$logfc_threshold)
+  v1_ctrl <- read_csv(v1_ctrl_file, show_col_types = FALSE) |>
+    filter(adj.P.Val < params$adj_pval_threshold,
+           abs(logFC) > params$logfc_threshold)
+
+  # v2 equivalentes
+  v2_fibrotic <- deg_sig |>
+    filter(comparison == "fibrotic_hipoxia_vs_fibrotic_normoxia")
+  v2_normal <- deg_sig |>
+    filter(comparison == "normal_hipoxia_vs_normal_normoxia")
+
+  cat("=== Fibrotic Hx vs Nx ===\n")
+  cat("v1 (Iván):", nrow(v1_ipf), "ncRNAs significativos\n")
+  cat("v2 (corregido):", nrow(v2_fibrotic), "ncRNAs significativos\n")
+
+  shared_fib <- intersect(v1_ipf$RNA, v2_fibrotic$SYMBOL)
+  cat("Compartidos:", length(shared_fib), "\n")
+  if (length(shared_fib) > 0) cat("  ", paste(shared_fib, collapse = ", "), "\n")
+
+  cat("\n=== Normal (Control) Hx vs Nx ===\n")
+  cat("v1 (Iván):", nrow(v1_ctrl), "ncRNAs significativos\n")
+  cat("v2 (corregido):", nrow(v2_normal), "ncRNAs significativos\n")
+
+  shared_ctrl <- intersect(v1_ctrl$RNA, v2_normal$SYMBOL)
+  cat("Compartidos:", length(shared_ctrl), "\n")
+  if (length(shared_ctrl) > 0) cat("  ", paste(shared_ctrl, collapse = ", "), "\n")
+} else {
+  cat("Tablas v1 no encontradas, saltando comparación.\n")
+}
+```
+
+# 4. Consultas ENCORI/StarBase
+
+## 4.1 Preparar listas de genes para consulta
+
+```{r prepare-encori-lists}
+# Comparaciones principales: las equivalentes a v1
+comparisons_encori <- c(
+  "fibrotic_hipoxia_vs_fibrotic_normoxia",
+  "normal_hipoxia_vs_normal_normoxia"
+)
+
+encori_input <- deg_sig |>
+  filter(comparison %in% comparisons_encori) |>
+  select(SYMBOL, logFC, adj.P.Val, comparison, ncrna_type)
+
+# Separar lncRNAs y miRNAs
+lncrnas <- encori_input |>
+  filter(!grepl("^MIR|^MIRLET", SYMBOL))
+
+mirnas_raw <- encori_input |>
+  filter(grepl("^MIR|^MIRLET", SYMBOL))
+
+cat("lncRNAs para consultar en ENCORI:", nrow(lncrnas), "\n")
+cat("miRNAs para consultar en ENCORI:", nrow(mirnas_raw), "\n")
+```
+
+## 4.2 Convertir nombres de miRNAs a formato ENCORI
+
+```{r mirna-format}
+# ENCORI usa formato: hsa-miR-1244, hsa-let-7a, etc.
+format_mirna_encori <- function(symbol) {
+  name <- tolower(symbol)
+  name <- gsub("^mir", "hsa-miR-", name)
+  name <- gsub("^let", "hsa-let-", name)
+  name
+}
+
+if (nrow(mirnas_raw) > 0) {
+  mirnas <- mirnas_raw |>
+    mutate(encori_name = format_mirna_encori(SYMBOL))
+
+  # Expandir con sufijos -3p y -5p
+  mirnas_expanded <- mirnas |>
+    mutate(
+      name_3p = paste0(encori_name, "-3p"),
+      name_5p = paste0(encori_name, "-5p")
+    )
+
+  mirna_names <- unique(c(mirnas_expanded$encori_name,
+                           mirnas_expanded$name_3p,
+                           mirnas_expanded$name_5p))
+  cat("miRNAs a consultar (con variantes 3p/5p):", length(mirna_names), "\n")
+  cat(head(mirna_names, 10), sep = "\n")
+} else {
+  mirna_names <- character(0)
+  cat("No hay miRNAs significativos para consultar.\n")
+}
+```
+
+## 4.3 Consultas ENCORI para lncRNAs
+
+```{r encori-lncrna, eval=FALSE}
+# NOTA: Estas consultas requieren conexión a internet y pueden tomar tiempo.
+# Cambiar eval=TRUE para ejecutar.
+
+results_lncrna <- list()
+
+for (comp in comparisons_encori) {
+  genes <- lncrnas |>
+    filter(comparison == comp) |>
+    pull(SYMBOL) |>
+    unique()
+
+  if (length(genes) > 0) {
+    cat("Consultando ENCORI para", length(genes), "lncRNAs en", comp, "\n")
+
+    result <- rna_rna(
+      geneType = "lncRNA",
+      RNA = genes,
+      interNum = params$min_interaction_num,
+      expNum = params$min_exp_num
+    )
+
+    if (!is.null(result)) {
+      result$comparison <- comp
+      results_lncrna[[comp]] <- result
+      cat("  Encontradas", nrow(result), "interacciones\n")
+    } else {
+      cat("  Sin resultados\n")
+    }
+  }
+}
+
+# Combinar resultados
+if (length(results_lncrna) > 0) {
+  encori_lncrna_all <- bind_rows(results_lncrna)
+  output_file <- file.path(project_dir, "data",
+                            "encori-lncrna-interactions-v2.csv")
+  write_csv(encori_lncrna_all, output_file)
+  cat("Resultados lncRNA guardados en:", output_file, "\n")
+}
+```
+
+## 4.4 Consultas ENCORI para miRNAs
+
+```{r encori-mirna, eval=FALSE}
+# NOTA: Estas consultas requieren conexión a internet y pueden tomar tiempo.
+# Cambiar eval=TRUE para ejecutar.
+
+if (length(mirna_names) > 0) {
+  results_mirna <- list()
+
+  for (comp in comparisons_encori) {
+    comp_mirnas <- mirnas_raw |>
+      filter(comparison == comp) |>
+      pull(SYMBOL)
+
+    comp_mirna_names <- unique(c(
+      format_mirna_encori(comp_mirnas),
+      paste0(format_mirna_encori(comp_mirnas), "-3p"),
+      paste0(format_mirna_encori(comp_mirnas), "-5p")
+    ))
+
+    if (length(comp_mirna_names) > 0) {
+      cat("Consultando ENCORI para", length(comp_mirna_names),
+          "miRNAs en", comp, "\n")
+
+      result <- rna_rna(
+        geneType = "miRNA",
+        RNA = comp_mirna_names,
+        interNum = params$min_interaction_num,
+        expNum = params$min_exp_num
+      )
+
+      if (!is.null(result)) {
+        result$comparison <- comp
+        results_mirna[[comp]] <- result
+        cat("  Encontradas", nrow(result), "interacciones\n")
+      } else {
+        cat("  Sin resultados\n")
+      }
+    }
+  }
+
+  if (length(results_mirna) > 0) {
+    encori_mirna_all <- bind_rows(results_mirna)
+    output_file <- file.path(project_dir, "data",
+                              "encori-mirna-interactions-v2.csv")
+    write_csv(encori_mirna_all, output_file)
+    cat("Resultados miRNA guardados en:", output_file, "\n")
+  }
+}
+```
+
+# 5. Resumen de resultados
+
+```{r summary}
+cat("============================================\n")
+cat("RESUMEN DEL PIPELINE v2-corrected\n")
+cat("============================================\n")
+cat("Fecha:", as.character(Sys.Date()), "\n")
+cat("Parámetros: adj.P.Val <", params$adj_pval_threshold,
+    ", |logFC| >", params$logfc_threshold, "\n\n")
+
+for (comp in unique(deg_summary$comparison)) {
+  row <- deg_summary |> filter(comparison == comp)
+  cat(comp, ":", row$n_total, "ncRNAs (",
+      row$n_up, "up,", row$n_down, "down)\n")
+}
+```
+
+# Información de sesión
+
+```{r session-info}
+sessionInfo()
+```
