@@ -5,6 +5,7 @@
 .Ruserdata
 *_cache/
 *_files/
+*.html
 
 # Datos crudos (archivos grandes, no versionados)
 data/raw/
