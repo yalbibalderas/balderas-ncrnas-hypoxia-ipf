@@ -1,0 +1,10 @@
+Subset	Detail
+1	Shared	MIR548AR
+2	IPF Fibroblast 	MIR5087
+3	Control Fibroblast 	MIR503
+4	Control Fibroblast 	MIR635
+5	Control Fibroblast 	MIR654
+6	Control Fibroblast 	MIR1244-1
+7	Control Fibroblast 	MIR24-2
+8	Control Fibroblast 	MIR590
+9	Control Fibroblast 	MIR6809

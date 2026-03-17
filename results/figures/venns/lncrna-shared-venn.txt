@@ -1,0 +1,88 @@
+Subset	Detail
+1	Shared	FLJ32255
+2	Shared	LOC153684
+3	Shared	LYRM4-AS1
+4	Shared	ADAMTS9-AS2
+5	Shared	LOC100507156
+6	Shared	HIF1A-AS2
+7	Shared	LOC154761
+8	lncRNAs of IPF Fibroblast in Hypoxia	LOC148413
+9	lncRNAs of IPF Fibroblast in Hypoxia	NRSN2-AS1
+10	lncRNAs of IPF Fibroblast in Hypoxia	HCG4
+11	lncRNAs of IPF Fibroblast in Hypoxia	LINC01111
+12	lncRNAs of IPF Fibroblast in Hypoxia	LINC00702
+13	lncRNAs of IPF Fibroblast in Hypoxia	EPB41L4A-AS1
+14	lncRNAs of IPF Fibroblast in Hypoxia	MSC-AS1
+15	lncRNAs of IPF Fibroblast in Hypoxia	LOC730101
+16	lncRNAs of Normal Fibroblast in Hypoxia	FENDRR
+17	lncRNAs of Normal Fibroblast in Hypoxia	HOTAIRM1
+18	lncRNAs of Normal Fibroblast in Hypoxia	SNORD3D
+19	lncRNAs of Normal Fibroblast in Hypoxia	LINC00473
+20	lncRNAs of Normal Fibroblast in Hypoxia	PAPPA-AS1
+21	lncRNAs of Normal Fibroblast in Hypoxia	KGFLP1
+22	lncRNAs of Normal Fibroblast in Hypoxia	LINC00578
+23	lncRNAs of Normal Fibroblast in Hypoxia	PAXIP1-AS2
+24	lncRNAs of Normal Fibroblast in Hypoxia	HERC2P7
+25	lncRNAs of Normal Fibroblast in Hypoxia	MFSD14C
+26	lncRNAs of Normal Fibroblast in Hypoxia	NUP50-AS1
+27	lncRNAs of Normal Fibroblast in Hypoxia	ASB16-AS1
+28	lncRNAs of Normal Fibroblast in Hypoxia	LOC389765
+29	lncRNAs of Normal Fibroblast in Hypoxia	AHCTF1P1
+30	lncRNAs of Normal Fibroblast in Hypoxia	HERC2P9
+31	lncRNAs of Normal Fibroblast in Hypoxia	CCT6P1
+32	lncRNAs of Normal Fibroblast in Hypoxia	RASSF8-AS1
+33	lncRNAs of Normal Fibroblast in Hypoxia	HERC2P3
+34	lncRNAs of Normal Fibroblast in Hypoxia	NUDT4P1
+35	lncRNAs of Normal Fibroblast in Hypoxia	XXYLT1-AS2
+36	lncRNAs of Normal Fibroblast in Hypoxia	KGFLP2
+37	lncRNAs of Normal Fibroblast in Hypoxia	MEIS3P1
+38	lncRNAs of Normal Fibroblast in Hypoxia	ZBED5-AS1
+39	lncRNAs of Normal Fibroblast in Hypoxia	MBNL1-AS1
+40	lncRNAs of Normal Fibroblast in Hypoxia	RNF217-AS1
+41	lncRNAs of Normal Fibroblast in Hypoxia	GABPB1-AS1
+42	lncRNAs of Normal Fibroblast in Hypoxia	GTF2IP1
+43	lncRNAs of Normal Fibroblast in Hypoxia	MAP3K14-AS1
+44	lncRNAs of Normal Fibroblast in Hypoxia	RNU12
+45	lncRNAs of Normal Fibroblast in Hypoxia	RPL13P5
+46	lncRNAs of Normal Fibroblast in Hypoxia	CCT6P3
+47	lncRNAs of Normal Fibroblast in Hypoxia	STX16-NPEPL1
+48	lncRNAs of Normal Fibroblast in Hypoxia	LOC344887
+49	lncRNAs of Normal Fibroblast in Hypoxia	LOC100129550
+50	lncRNAs of Normal Fibroblast in Hypoxia	LOC103021295
+51	lncRNAs of Normal Fibroblast in Hypoxia	TBX2-AS1
+52	lncRNAs of Normal Fibroblast in Hypoxia	ZNF625-ZNF20
+53	lncRNAs of Normal Fibroblast in Hypoxia	LOC101928161
+54	lncRNAs of Normal Fibroblast in Hypoxia	SNORD114-30
+55	lncRNAs of Normal Fibroblast in Hypoxia	LIMD1-AS1
+56	lncRNAs of Normal Fibroblast in Hypoxia	MEG3
+57	lncRNAs of Normal Fibroblast in Hypoxia	SNORD114-13
+58	lncRNAs of Normal Fibroblast in Hypoxia	PPP4R1L
+59	lncRNAs of Normal Fibroblast in Hypoxia	SNORD89
+60	lncRNAs of Normal Fibroblast in Hypoxia	SNORD114-10
+61	lncRNAs of Normal Fibroblast in Hypoxia	LINC00152
+62	lncRNAs of Normal Fibroblast in Hypoxia	AGAP2-AS1
+63	lncRNAs of Normal Fibroblast in Hypoxia	EFTUD1P1
+64	lncRNAs of Normal Fibroblast in Hypoxia	ZMIZ1-AS1
+65	lncRNAs of Normal Fibroblast in Hypoxia	CD99P1
+66	lncRNAs of Normal Fibroblast in Hypoxia	SNORD114-7
+67	lncRNAs of Normal Fibroblast in Hypoxia	TPT1-AS1
+68	lncRNAs of Normal Fibroblast in Hypoxia	PLCXD1
+69	lncRNAs of Normal Fibroblast in Hypoxia	LOC101929771
+70	lncRNAs of Normal Fibroblast in Hypoxia	LINC00520
+71	lncRNAs of Normal Fibroblast in Hypoxia	RPSAP52
+72	lncRNAs of Normal Fibroblast in Hypoxia	SNORD114-17
+73	lncRNAs of Normal Fibroblast in Hypoxia	LOC541472
+74	lncRNAs of Normal Fibroblast in Hypoxia	TCAF2P1
+75	lncRNAs of Normal Fibroblast in Hypoxia	LOC101929705
+76	lncRNAs of Normal Fibroblast in Hypoxia	LINC00260
+77	lncRNAs of Normal Fibroblast in Hypoxia	FER1L4
+78	lncRNAs of Normal Fibroblast in Hypoxia	STXBP5-AS1
+79	lncRNAs of Normal Fibroblast in Hypoxia	SNORD114-2
+80	lncRNAs of Normal Fibroblast in Hypoxia	SNORA11
+81	lncRNAs of Normal Fibroblast in Hypoxia	LOC100507065
+82	lncRNAs of Normal Fibroblast in Hypoxia	FAM41C
+83	lncRNAs of Normal Fibroblast in Hypoxia	LINC01125
+84	lncRNAs of Normal Fibroblast in Hypoxia	LIMS3-LOC440895
+85	lncRNAs of Normal Fibroblast in Hypoxia	SLC6A10P
+86	lncRNAs of Normal Fibroblast in Hypoxia	LINC01291
+87	lncRNAs of Normal Fibroblast in Hypoxia	LUCAT1

@@ -1,0 +1,100 @@
+DEATR0001	A. trichopoda	AMTR1.0	PARE	leaf
+DEATR0002	A. trichopoda	AMTR1.0	PARE	opened female flower
+DEATH0001	A. thaliana	TAIR10	PARE	inflorescence
+DEATH0002	A. thaliana	TAIR10	PARE	inflorescence
+DEATH0003	A. thaliana	TAIR10	PARE	seedling
+DEATH0004	A. thaliana	TAIR10	PARE	inflorescence
+DEATH0005	A. thaliana	TAIR10	PARE	inflorescence
+DEATH0006	A. thaliana	TAIR10	GMUCT	flower bud
+DEATH0007	A. thaliana	TAIR10	GMUCT	flower bud
+DEATH0008	A. thaliana	TAIR10	PARE	inflorescence
+DEATH0009	A. thaliana	TAIR10	PARE	inflorescence
+DEATH0010	A. thaliana	TAIR10	PARE	inflorescence
+DEATH0011	A. thaliana	TAIR10	PARE	inflorescence
+DEATH0012	A. thaliana	TAIR10	PARE	leaf
+DEATH0013	A. thaliana	TAIR10	PARE	leaf
+DEATH0014	A. thaliana	TAIR10	PARE	leaf
+DEATH0015	A. thaliana	TAIR10	PARE	leaf
+DEATH0016	A. thaliana	TAIR10	PARE	leaf
+DEATH0017	A. thaliana	TAIR10	PARE	leaf
+DEBDI0001	B. distachyon	Brachypodium_distachyon_v1.0	PARE	root
+DEBDI0002	B. distachyon	Brachypodium_distachyon_v1.0	PARE	leaf
+DEBDI0003	B. distachyon	Brachypodium_distachyon_v1.0	PARE	stem
+DEBDI0004	B. distachyon	Brachypodium_distachyon_v1.0	PARE	panicle
+DEBJU0001	B. juncea	IVFCAASv1	PARE	floral buds
+DEBJU0002	B. juncea	IVFCAASv1	PARE	floral buds
+DECEL0001	worm	ce11	PARE	whole organ
+DECEL0002	worm	ce11	PARE	whole organ
+DECEL0003	worm	ce11	PARE	whole organ
+DEGMA0001	G. max	Glycine_max_V1.0	PARE	seed
+DEGMA0002	G. max	Glycine_max_v1.0	PARE	mixed tissues
+DEGMA0003	G. max	Glycine_max_v1.0	PARE	cotyledon
+DEGMA0004	G. max	Glycine_max_v1.0	PARE	seed coat
+DEGMA0005	G. max	Glycine_max_v1.0	PARE	cotyledon
+DEGMA0006	G. max	Glycine_max_v1.0	PARE	seed coat
+DEGMA0007	G. max	Glycine_max_v1.0	PARE	cotyledon
+DEGMA0008	G. max	Glycine_max_V1.0	GMUCT	root
+DEGSO0001	G. soja	Glycine_soja_V1.0	PARE	root
+DEGSO0002	G. soja	Glycine_soja_V1.0	PARE	root
+DEHSA0001	human	hg19	GMUCT	293S
+DEHSA0002	human	hg19	GMUCT	293S
+DEHSA0003	human	hg19	GMUCT	293S
+DEHSA0004	human	hg19	GMUCT	293S
+DEHSA0005	human	hg19	GMUCT	293S
+DEHSA0006	human	hg19	GMUCT	293S
+DEHSA0007	human	hg19	GMUCT	293S
+DEHSA0008	human	hg19	PARE	HeLa
+DEHSA0009	human	hg19	PARE	HeLa
+DEHSA0010	human	hg19	PARE	HeLa
+DEHSA0011	human	hg19	PARE	HeLa
+DEHSA0012	human	hg19	PARE	HeLa
+DEHSA0013	human	hg19	PARE	whole brain
+DEHSA0014	human	hg19	PARE	whole brain
+DEHSA0015	human	hg19	PARE	whole brain
+DEHSA0016	human	hg19	GMUCT	HEK293
+DEHSA0017	human	hg19	GMUCT	HEK293
+DEHSA0018	human	hg19	GMUCT	HeLa
+DEHSA0019	human	hg19	GMUCT	HeLa
+DEHSA0020	human	hg19	GMUCT	K562
+DEHSA0021	human	hg19	GMUCT	K562
+DEHVU0001	barley	IBSC-1.0	PARE	Golden Promise grain
+DEHVU0002	barley	IBSC-1.0	PARE	Golden Promise grain
+DEHVU0003	barley	IBSC-1.0	PARE	Golden Promise grain
+DEMTR0001	M. truncatula	MedtrA17-3.5	PARE	root
+DEMTR0002	M. truncatula	MedtrA17-3.5	PARE	root
+DEMTR0003	M. truncatula	MedtrA17-3.5	PARE	flower
+DEMMU0001	mouse	mm10	GMUCT	ESC
+DEMMU0002	mouse	mm10	GMUCT	ESC
+DEMMU0003	mouse	mm10	GMUCT	ESC
+DEMMU0004	mouse	mm10	GMUCT	ESC
+DEMMU0005	mouse	mm10	GMUCT	ESC
+DEMMU0006	mouse	mm10	GMUCT	ESC
+DEMMU0007	mouse	mm10	GMUCT	Testes
+DEMMU0008	mouse	mm10	GMUCT	Testes
+DENVE0001	N. vectensis	ASM20922v1	GMUCT	primary polyp
+DENVE0002	N. vectensis	ASM20922v1	GMUCT	primary polyp
+DEORU0001	O. rufipogon	PRJEB4137	PARE	Dongxiang, leaf
+DEOSI0001	indica Rice	ASM465v1	PARE	inflorescence
+DEOSJ0001	japonica Rice	IRGSP-1.0	PARE	seedling
+DEOSJ0002	japonica Rice	IRGSP-1.0	PARE	seedling
+DEOSJ0003	japonica Rice	IRGSP-1.0	PARE	inflorescence
+DEPPA0001	P. patens	ASM242v1	PARE	protonemata
+DEPPE0001	peach	Prupe1_0	PARE	Lovell, mixed tissues
+DESLY0001	tomato	SL2.40	PARE	leaf
+DESLY0002	tomato	SL2.40	PARE	flower
+DESLY0003	tomato	SL2.40	PARE	green fruit
+DESLY0004	tomato	SL2.40	PARE	whole fruit
+DESLY0005	tomato	SL2.40	PARE	whole fruit
+DESLY0006	tomato	SL2.40	PARE	whole fruit
+DESLY0007	tomato	SL2.40	PARE	whole fruit
+DETAE0001	weat	IWGSP1	PARE	spike
+DETAE0002	weat	IWGSP1	PARE	spike
+DEVVI0001	grape	IGGP_12x	PARE	leaves and stem
+DEZMA0001	Z. mays	AGPv3	PARE	root tip
+DEZMA0002	Z. mays	AGPv3	PARE	root tip
+DEZMA0003	Z. mays	AGPv3	PARE	leaf
+DEZMA0004	Z. mays	AGPv3	PARE	leaf
+DEZMA0005	Z. mays	AGPv3	PARE	ear (female inflorescence)
+DEZMA0006	Z. mays	AGPv3	PARE	ear (female inflorescence)
+DEZMA0007	Z. mays	AGPv3	PARE	ear (female inflorescence)
+DEZMA0008	Z. mays	AGPv3	PARE	ear (female inflorescence)

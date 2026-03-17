@@ -19,19 +19,47 @@ Análisis de redes de RNA no codificante (lncRNA-mRNA) en fibroblastos pulmonare
 
 ```
 balderas-ncrnas-hypoxia-ipf/
-├── README.md
-├── LICENSE
-├── .gitignore
-├── balderas-ncrnas-hypoxia-ipf.Rproj
-├── scripts/                    # Scripts de análisis de redes ncRNA
-│   ├── encori.R                # Consultas a ENCORI/StarBase
+├── README.md, LICENSE, .gitignore, balderas-ncrnas-hypoxia-ipf.Rproj
+│
+├── scripts/
+│   ├── encori.R                    # Consultas a ENCORI/StarBase
 │   ├── encori2.R
-│   ├── network.R               # Construcción de redes lncRNA-mRNA
-│   ├── rna-rna-function.R      # Funciones para interacciones RNA-RNA
-│   └── run-rna-rna-from-list.R
-├── data/                       # Tablas de interacciones RNA
-├── results/                    # Redes, figuras
-└── docs/                       # Manuscrito en preparación
+│   ├── network.R                   # Construcción de redes lncRNA-mRNA
+│   ├── rna-rna-function.R          # Funciones para interacciones RNA-RNA
+│   ├── run-rna-rna-from-list.R
+│   └── ivan/                       # Scripts del Dr. Iván Salido
+│       ├── 00-pipeline-ipf-hipoxia-ivan.R
+│       └── rhistory-*.R            # Historiales de sesiones R
+│
+├── data/
+│   ├── *-table-differential-expression-nr.csv  # Tablas DE (IPF y Control)
+│   ├── rna-interactions-resultados-*.csv       # Resultados ENCORI
+│   ├── expression-matrices/        # Matrices de expresión normalizadas
+│   ├── deg-lists/                  # Listas de DEGs por comparación
+│   │   ├── fibrotic-hx-vs-nx/
+│   │   └── normal-hx-vs-nx/
+│   ├── encori-reference/           # Datos de referencia ENCORI/StarBase
+│   ├── mirnet/                     # Datos de redes MirNet (nodos, targets)
+│   └── lncrna-rnacentral/         # Anotaciones RNAcentral para lncRNAs
+│
+├── results/
+│   ├── networks/                   # Redes Cytoscape (.cys)
+│   ├── tables/                     # Tablas suplementarias
+│   ├── enrichment/                 # Análisis de enriquecimiento
+│   │   └── normal/                 # Enrichment normal Hx vs Nx
+│   │       └── mirna/              # Por miRNA individual
+│   └── figures/
+│       ├── fig1-experimental-design.png
+│       ├── fig3-heatmap-volcano-boxplot.png
+│       ├── heatmaps-volcanos/      # Heatmaps y volcanos por comparación
+│       ├── networks/               # Screenshots de redes
+│       ├── venns/                  # Diagramas de Venn (ncRNAs compartidos)
+│       └── previous-versions/      # Versiones anteriores de figuras
+│
+└── docs/
+    ├── legend-figure-2-ivan.pdf    # Leyenda de Fig. 2 (Iván)
+    ├── manuscript/                 # Manuscrito y figuras en preparación
+    └── photo-*.jpg                 # Fotos de reuniones
 ```
 
 ## Descripción
@@ -42,6 +70,8 @@ A partir de los genes diferencialmente expresados identificados en el análisis 
 
 - R / RStudio
 - ENCORI / StarBase (interacciones RNA-RNA)
+- MirNet (redes miRNA-target)
+- Enrichr (análisis de enriquecimiento funcional)
 - Cytoscape (visualización de redes)
 - Clariom D (Affymetrix) — datos base del análisis transcriptómico
 
